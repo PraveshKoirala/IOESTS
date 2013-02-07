@@ -1,7 +1,8 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from ioestu.models import Student,Operator,Activity
+from ioestu.models import Student,Operator, Activity
+from ioestu.models import Activity
 import datetime
 
 
@@ -25,8 +26,8 @@ def index(request):
 
         for operator in all_users:
             if operator.name == username and operator.password == password:
-                #del request.session['data_ioests']
-                request.session['data_ioests']={'type':'operator','name':username,'credit_before':'null'}
+                del request.session['data_ioests']
+                request.session['data_ioests']={'type':'operator','name':username,'balance_before':'null'}
                 return  HttpResponseRedirect('/logged/')
         
     return render_to_response('ioestu/index.html',{'state':state, 'username': username},RequestContext(request))
@@ -46,15 +47,15 @@ def logged(request):
             last_Activity = "student doesn't exist"            
             operat = Operator.objects.get(name=operator)
             for stu in students:
-                if stu.name == student:  
-                    stud = Student.objects.get(name=student)
-                    data_ioests['credit_before']=stud.credit   
-                    Activity = Activity(
-                            student=stud,type=type,operator=operat,details=details,amount=amount
+                if stu.student_id == student:  
+                    stud = Student.objects.get(student_id=student)
+                    data_ioests['balance_before']=stud.balance
+                    activ = Activity(
+                            student=stud,atype=type,operator=operat,details=details,amount=amount
                         )
-                    Activity.save()
+                    activ.save()
                     amount *= (type== 'credit deposited') and 1 or -1 
-                    stud.credit += amount
+                    stud.balance += amount
                     stud.save()
                    # del request.session['data_ioests']
                     request.session['data_ioests']=data_ioests
@@ -63,6 +64,6 @@ def logged(request):
         Activity_latest = Activity.objects.all()
         if Activity_latest:
             Activity_latest = Activity.objects.all().order_by('-date')[0]
-        return render_to_response('ioestu/logged.html',{'state':state,'last_Activity':last_Activity,'Activity_latest':Activity_latest,'credit_before':data_ioests['credit_before']},RequestContext(request))
+        return render_to_response('ioestu/logged.html',{'state':state,'last_Activity':last_Activity,'Activity_latest':Activity_latest,'balance_before':data_ioests['balance_before']},RequestContext(request))
 
 
