@@ -1,0 +1,39 @@
+{% extends "ioestu/base.html" %}
+{% block content %} 	
+	<div id="left">
+	<p>Welcome to IOE Student Transaction System.<br>Transactions</p>
+	{{ state }}<br>
+
+	{{last_transaction}}
+	<p>
+	<form action="/logged/" method="post">
+		{% csrf_token%}
+		student <input type="text" name="student" value=""><br>
+		type <select name="type">
+			  	<option value="credit deposited">deposit credit</option>
+			  	<option value="credit withdrawed">withdraw credit</option>
+			  	<option value="payment">payment</option>
+			</select>  <br>
+		details <input type="input" name="details" value="" ><br>
+		amount <input type="input" name="amount" value=""><br>
+		<input type="submit" value="submit">
+	</form>
+	</p>
+	</div>
+
+	<div id="right">
+		{% if credit_before != 'null' %}
+		<h2>last transaction</h2><br>
+		type: {{transaction_latest.type}}<br>
+		details: {{transaction_latest.details}}<br>
+		amount: {{transaction_latest.amount}}<br>
+		operator: {{transaction_latest.Operator.name}}<br>
+		student: {{transaction_latest.student.name}}<br><br>
+
+		<h2>student</h2><br>
+		name: {{transaction_latest.student.name}}<br>
+		credit_before: {{credit_before}}<br>
+		credit_after: {{transaction_latest.student.credit}}<br>
+		{% endif %}
+	</div>
+{% endblock %}
