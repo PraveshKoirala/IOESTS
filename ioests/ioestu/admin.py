@@ -16,7 +16,7 @@ class StudentAdmin(admin.ModelAdmin):
 		(None,	{'fields':['balance']}),
 	]
 	inlines = [ActivityInline]
-	list_display = ('barcode', 'name', 'password','credit')
+	list_display = ('student_id', 'firstname', 'password','balance')
 
 class OperatorAdmin(admin.ModelAdmin):
 	fieldsets = [

@@ -10,7 +10,7 @@ class Student(models.Model):
 	balance = models.FloatField()
 
 	def __unicode__(self):
-		return self.name
+		return self.firstname
 
 class Operator(models.Model):
 	name = models.CharField(max_length=20)
