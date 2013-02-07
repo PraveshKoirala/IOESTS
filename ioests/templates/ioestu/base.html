@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static from staticfiles %}
+    <link rel="stylesheet" href="{% static "ioestu/style.css" %}">
+    <title>{% block title %}ioe student transaction system{% endblock %}</title>
+</head>
+
+<body>
+    <div id="title"><h3 >IOE Student Transaction System</h3></div>
+    <hr/>
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
