@@ -14,9 +14,14 @@ class StudentAdmin(admin.ModelAdmin):
 		('lastname', {'fields':['lastname']}),
 		('password',	{'fields':['password'],'classes':['collapse']}),
 		(None,	{'fields':['balance']}),
+		(None, {'fields':['emailid']})
 	]
 	inlines = [ActivityInline]
-	list_display = ('student_id', 'firstname', 'password','balance')
+	#<<<<<<< HEAD
+	#list_display = ('student_id', 'firstname', 'password','balance')
+	#=======
+	list_display = ('student_id', 'firstname','lastname', 'password','balance','emailid')
+	#>>>>>>> 94715facf35e0510dbe67847387bbb1953a55589
 
 class OperatorAdmin(admin.ModelAdmin):
 	fieldsets = [
@@ -24,6 +29,7 @@ class OperatorAdmin(admin.ModelAdmin):
 		(None,{'fields':['password']}),
 	]
 	list_display = ('name', 'password')
+
 
 admin.site.register(Student,StudentAdmin)
 admin.site.register(Operator,OperatorAdmin)

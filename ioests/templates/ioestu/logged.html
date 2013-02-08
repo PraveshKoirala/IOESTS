@@ -24,16 +24,17 @@
 	<div id="right">
 		{% if credit_before != 'null' %}
 		<h2>last transaction</h2><br>
-		type: {{transaction_latest.type}}<br>
-		details: {{transaction_latest.details}}<br>
-		amount: {{transaction_latest.amount}}<br>
-		operator: {{transaction_latest.Operator.name}}<br>
-		student: {{transaction_latest.student.name}}<br><br>
+		type: {{Activity_latest.atype}}<br>
+		details: {{Activity_latest.details}}<br>
+		amount: {{Activity_latest.amount}}<br>
+		operator: {{Activity_latest.operator.name}}<br>
+		student_id: {{Activity_latest.student.student_id}}<br><br>
 
 		<h2>student</h2><br>
-		name: {{transaction_latest.student.name}}<br>
-		credit_before: {{credit_before}}<br>
-		credit_after: {{transaction_latest.student.credit}}<br>
+		firstname: {{Activity_latest.student.firstname}}<br>
+		lastname: {{Activity_latest.student.lastname}}<br>
+		balance_before: {{balance_before}}<br>
+		balance_after: {{Activity_latest.student.balance}}<br>
 		{% endif %}
 	</div>
 {% endblock %}
