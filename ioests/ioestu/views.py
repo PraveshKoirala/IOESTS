@@ -26,7 +26,8 @@ def index(request):
 
         for operator in all_users:
             if operator.name == username and operator.password == password:
-                del request.session['data_ioests']
+                # if request.session['data_ioests']:
+                #     del request.session['data_ioests']
                 request.session['data_ioests']={'type':'operator','name':username,'balance_before':'null'}
                 return  HttpResponseRedirect('/logged/')
         
