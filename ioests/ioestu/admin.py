@@ -17,7 +17,11 @@ class StudentAdmin(admin.ModelAdmin):
 		(None, {'fields':['emailid']})
 	]
 	inlines = [ActivityInline]
+	#<<<<<<< HEAD
+	#list_display = ('student_id', 'firstname', 'password','balance')
+	#=======
 	list_display = ('student_id', 'firstname','lastname', 'password','balance','emailid')
+	#>>>>>>> 94715facf35e0510dbe67847387bbb1953a55589
 
 class OperatorAdmin(admin.ModelAdmin):
 	fieldsets = [

@@ -8,7 +8,7 @@ class Student(models.Model):
 	lastlogin = models.CharField(max_length=20)
 	password = models.CharField(max_length=20)
 	balance = models.FloatField()
-	emailid = models.CharField(max_length=20)
+	emailid = models.CharField(max_length=50, unique=True)
 
 	def __unicode__(self):
 		return self.firstname
@@ -23,7 +23,7 @@ class Operator(models.Model):
 
 class Activity(models.Model):
 	student = models.ForeignKey('Student')
-	atype = models.CharField(max_length=20)
+	atype = models.CharField(max_length=30)
 	operator = models.ForeignKey('Operator')
 	details = models.CharField(max_length=50)
 	amount = models.FloatField()
