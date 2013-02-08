@@ -17,7 +17,6 @@ urlpatterns = patterns('ioestu.views',
     # Uncomment the next line to enable the admin:
 )
 
-#Fixed from 'urlpatterns = patterns..' to 'urlpatterns += patterns' 
 urlpatterns += patterns('ioestu.endofday',
-	url(r'^endofday/$', 'notificationTrigger'),
+	url(r'^endofday/$', 'accountingTask'),
 	)

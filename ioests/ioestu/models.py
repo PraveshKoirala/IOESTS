@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, connection
 import datetime
 
 class Student(models.Model):
@@ -21,6 +21,15 @@ class Operator(models.Model):
 		return self.name
 
 
+class activityCustomQuery(models.Manager):
+	def getTodaysActivity(self):
+		cursor = connection.cursor()
+		cursor.execute('''
+				select * from ioestu_activity 
+				where date between now()- interval '1 days' + interval '+5:45' HOUR TO MINUTE and now() + interval '+5:45' HOUR TO MINUTE
+				''')
+		return cursor
+
 class Activity(models.Model):
 	student = models.ForeignKey('Student')
 	atype = models.CharField(max_length=30)
@@ -28,6 +37,8 @@ class Activity(models.Model):
 	details = models.CharField(max_length=50)
 	amount = models.FloatField()
 	date = models.DateTimeField(default=datetime.datetime.now)
-
+	objects = activityCustomQuery()
 	def __unicode__(self):
 		return self.atype
+
+
