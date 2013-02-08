@@ -21,16 +21,23 @@ def notificationTrigger(request):
 from django.db import connection
 def accountingTask(request):
 	# totalTrans = Activity.objects.all()
-	cursor = connection.cursor()
-	cursor.execute('''
-			select * from ioestu_activity 
-			where date between now()- interval '1 days' + interval '+5:45' HOUR TO MINUTE and now() + interval '+5:45' HOUR TO MINUTE
-		''')
+	totalTrans = Activity.objects.getTodaysActivity()
 	# totalTrans = [row for row in cursor.fetchone()]
 	# totalTrans = Activity.objects.filter(date = datetime.date.today())
 	output = '<html>this is test'
-	for item in cursor:
-		output += str(item[6])+"<br>"
+	totalDeposit, totalCredit = 0, 0
+	for trans in totalTrans:
+		output += str(trans[0]) +  '<br />'
+		if (trans[2] == 'credit deposited'):
+			totalDeposit += trans[5]
+		elif (trans[2] == 'credit withdrawed'):
+			totalCredit += trans[5]
+		elif (trans[2] == 'payment'):
+			totalCredit += trans[5]
+	output += '''<br /> Total deposit amount = %d<br />
+						Total return amount = %d<br />
+						Total Transaction amount = %d
+				''' % (totalDeposit, totalCredit, totalDeposit + totalCredit)
 	output += '</html>'
 	return HttpResponse(output)
 
