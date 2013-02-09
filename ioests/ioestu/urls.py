@@ -16,6 +16,12 @@ urlpatterns = patterns('ioestu.views',
 
     # Uncomment the next line to enable the admin:
 )
+
 urlpatterns += patterns('ioestu.endofday',
+<<<<<<< HEAD
 	url(r'^endofday/$', 'backupDatabase'),
 	)
+=======
+	url(r'^endofday/$', 'accountingTask'),
+	)
+>>>>>>> 1441035ac1d193312c7e6f371744621d5a98641e
