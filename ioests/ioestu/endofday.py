@@ -40,17 +40,12 @@ def accountingTask(request):
 	totalTrans = Activity.objects.getTodaysActivity()
 	totalDeposit, totalCredit, output = 0, 0, ''
 	for trans in totalTrans:
-		output += str(trans[0]) +  '<br />'
 		if (trans[2] == 'credit deposited'):
 			totalDeposit += trans[5]
 		elif (trans[2] == 'credit withdrawed'):
 			totalCredit += trans[5]
 		elif (trans[2] == 'payment'):
 			totalCredit += trans[5]
-	output += '''<br /> Total deposit amount = %d<br />
-						Total return amount = %d<br />
-						Total Transaction amount = %d
-				''' % (totalDeposit, totalCredit, totalDeposit + totalCredit)
 	netDeposit = totalDeposit - totalCredit
 	if balanceSheet.objects.all():
 		lastEntry = balanceSheet.objects.all().order_by('-date')[0]
@@ -59,7 +54,7 @@ def accountingTask(request):
 	balance = balanceSheet(incoming = totalDeposit, outgoing = totalCredit, date = datetime.date.today(), netBalance = netDeposit)
 	balance.save()
 	sendEmail(reportSubject, getReportMessage(totalDeposit, totalCredit), EMAIL_SUPERUSER)
-	return HttpResponse(output)
+	return HttpResponse('accounting task')
 
 
 from django.core.mail import send_mail
