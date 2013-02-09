@@ -1,45 +1,60 @@
 from models import *
 from django.http import HttpResponse
 import datetime
+from emailTemplates import *
+import json
+
+def getJson(data):
+	dataList = []
+	for item in data:
+		dataList.append({
+					'id' : str(item[0]),
+					'student' : item[1],
+					'atype' : item[2],
+					'operator' : item[3],
+					'detail': item[4],
+					'amount': item[5],
+					'date' : str(item[6]), 
+		})
+	return json.dumps(dataList)
+
 def backupDatabase(request):
-	pass
+	totalTrans = Activity.objects.getTodaysActivity()
+	jsonData = getJson(totalTrans)
+	fileName = 'activityBackup/backup'+str(datetime.date.today())+'.sts'
+	backupFile = open(fileName, 'w+')
+	backupFile.write(jsonData)
+	backupFile.close()
+	return HttpResponse(jsonData)
+
 
 def notificationTrigger(request):
 	targetList = Student.objects.filter(balance__range=(0, 10))
 	mailList = []
-	output = ''
 	for eachStudent in targetList:
 		mailList += [eachStudent.emailid]
-		output += eachStudent.firstname + '<br>'
-	subject = 'Recharge your IOESTS balance'
-	message = '''Dear Student,
-	Your IOESTS account balance is getting low. Please recharge your account.
-	Thanks
-	'''
-	return HttpResponse(sendEmail(subject = subject, message = message, mailingList = mailList))
+	return HttpResponse(sendEmail(subject = rechargeSubject, message = rechargeMessage, mailingList = mailList))
 
-from django.db import connection
+
 def accountingTask(request):
-	# totalTrans = Activity.objects.all()
 	totalTrans = Activity.objects.getTodaysActivity()
-	# totalTrans = [row for row in cursor.fetchone()]
-	# totalTrans = Activity.objects.filter(date = datetime.date.today())
-	output = '<html>this is test'
-	totalDeposit, totalCredit = 0, 0
+	totalDeposit, totalCredit, output = 0, 0, ''
 	for trans in totalTrans:
-		output += str(trans[0]) +  '<br />'
 		if (trans[2] == 'credit deposited'):
 			totalDeposit += trans[5]
 		elif (trans[2] == 'credit withdrawed'):
 			totalCredit += trans[5]
 		elif (trans[2] == 'payment'):
 			totalCredit += trans[5]
-	output += '''<br /> Total deposit amount = %d<br />
-						Total return amount = %d<br />
-						Total Transaction amount = %d
-				''' % (totalDeposit, totalCredit, totalDeposit + totalCredit)
-	output += '</html>'
-	return HttpResponse(output)
+	netDeposit = totalDeposit - totalCredit
+	if balanceSheet.objects.all():
+		lastEntry = balanceSheet.objects.all().order_by('-date')[0]
+		if not(lastEntry.date == datetime.date.today()):
+			netDeposit += lastEntry.netBalance
+	balance = balanceSheet(incoming = totalDeposit, outgoing = totalCredit, date = datetime.date.today(), netBalance = netDeposit)
+	balance.save()
+	sendEmail(reportSubject, getReportMessage(totalDeposit, totalCredit), EMAIL_SUPERUSER)
+	return HttpResponse('accounting task')
 
 
 from django.core.mail import send_mail

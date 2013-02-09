@@ -18,5 +18,5 @@ urlpatterns = patterns('ioestu.views',
 )
 
 urlpatterns += patterns('ioestu.endofday',
-	url(r'^endofday/$', 'accountingTask'),
+	url(r'^endofday/$', 'backupDatabase'),
 	)
