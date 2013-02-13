@@ -1,0 +1,3 @@
+.gitignore file contains the files that are to be ignored. For example
+*.pyc
+Add this in your project.
