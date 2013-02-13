@@ -1,0 +1,73 @@
+{% extends "ioestu/base.html" %}
+{% block content %} 	
+	{{ state }}<br>
+	<a href="/">logout</a>
+	<ul class="tabs" persist="true">
+            <li><a href="#" rel="view1">Payment</a></li>
+            <li><a href="#" rel="view2">Deposit Balance</a></li>
+            <li><a href="#" rel="view3">Create Account</a></li>
+            <li><a href="#" rel="view4">Close Account</a></li>
+    </ul>
+
+    <div class="tabcontents">
+            <div id="view1" class="tabcontent">
+            		<table>
+            		<tr>
+            		<td width=400>
+					<p><div class="error">{{last_Activity}}</div></p>
+					<form action="/logged/" method="post">
+						{% csrf_token%}
+						student_id <input type="text" name="student_id" value=""><br>
+						password <input type="password" name="password" value=""><br>
+						details <input type="input" name="details" value="" ><br>
+						amount <input type="input" name="amount" value=""><br>
+						<input type="submit" value="submit">
+						<input type="hidden" name="activity_type" value="payment">
+					</form>
+					</td>
+					<td>
+					{% if credit_before != 'null' %}
+					<h2>last transaction</h2><br>
+					type: {{Activity_latest.atype}}<br>
+					details: {{Activity_latest.details}}<br>
+					amount: {{Activity_latest.amount}}<br>
+					operator: {{Activity_latest.operator.name}}<br>
+					student_id: {{Activity_latest.student.student_id}}<br><br>
+
+					<h2>student</h2><br>
+					firstname: {{Activity_latest.student.firstname}}<br>
+					lastname: {{Activity_latest.student.lastname}}<br>
+					balance_before: {{balance_before}}<br>
+					balance_after: {{Activity_latest.student.balance}}<br>
+					{% endif %}
+				</td>
+					</tr>
+					</table>
+                
+            </div>
+            <div id="view2" class="tabcontent">
+	                <form action="/logged/" method="post">
+							{% csrf_token%}
+							student_id <input type="text" name="student_id" value=""><br>
+							password <input type="password" name="password" value=""><br>
+							amount <input type="input" name="amount" value=""><br>
+							<input type="submit" value="submit">
+					</form>
+            </div>
+            <div id="view3" class="tabcontent">
+	                <form action="/logged/" method="post">
+							{% csrf_token%}
+							student_id <input type="text" name="student_id" value=""><br>
+							<input type="submit" value="submit">
+					</form>
+            </div>
+            <div id="view4" class="tabcontent">
+	                <form action="/logged/" method="post">
+							{% csrf_token%}
+							student_id <input type="text" name="student_id" value=""><br>
+							<input type="submit" value="submit">
+					</form>             
+            </div>
+    </div>
+
+{% endblock %}
