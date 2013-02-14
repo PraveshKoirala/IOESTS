@@ -6,16 +6,35 @@ body {
 	padding: 10px;
 }
 
+th
+{
+	width:100px;
+	text-align:left;
+}
+
 #content {
+	width: 800px;
+	margin: 0 auto;
+	padding: 12px 0 40px;
+	font: 0.85em arial;
 
 }
 
-#left {
-	padding:50px;
+#title {
+	text-align: center;
+}
+
+div.left {
+	margin-top:50px;
 	float:left;
+	display: block;
 }
 
 #right {
 	padding:50px;
 	float:right;
+}
+
+.error {
+	color: red;
 }

@@ -1,0 +1,57 @@
+{% extends "ioestu/base.html" %}
+{% block content %} 	
+	{{ state }}<br>
+	<a href="/">logout</a>
+	<ul class="tabs" persist="true">
+            <li><a href="#" rel="view1">Info</a></li>
+            <li><a href="#" rel="view2">Transactions</a></li>
+            <li><a href="#" rel="view3">Create Account</a></li>
+            <li><a href="#" rel="view4">Close Account</a></li>
+    </ul>
+
+    <div class="tabcontents">
+            <div id="view1" class="tabcontent">
+
+					student_id: {{student.student_id}}<br>
+					firstname: {{student.firstname}}<br>
+					lastname: {{student.lastname}}<br>
+					balance: {{student.balance}}<br>
+					emailid: {{student.emailid}}<br>
+
+                
+            </div>
+            <div id="view2" class="tabcontent">
+            	<table>
+	             	<th>acivity_type</th>
+					<th>operator</th>
+					<th>details</th>
+					<th>amount</th>
+					<th>datetime</th>   
+				{% for activity in activities%}
+					<tr>
+					<td>{{activity.atype}}</td>
+					<td>{{activity.operator}}</td>
+					<td>{{activity.details}}</td>
+					<td>{{activity.amount}}</td>
+					<td>{{activity.date}}</td>
+					</tr>
+					{% endfor %}
+				</table>
+            </div>
+            <div id="view3" class="tabcontent">
+	                <form action="/logged/" method="post">
+							{% csrf_token%}
+							student_id <input type="text" name="student_id" value=""><br>
+							<input type="submit" value="submit">
+					</form>
+            </div>
+            <div id="view4" class="tabcontent">
+	                <form action="/logged/" method="post">
+							{% csrf_token%}
+							student_id <input type="text" name="student_id" value=""><br>
+							<input type="submit" value="submit">
+					</form>             
+            </div>
+    </div>
+
+{% endblock %}

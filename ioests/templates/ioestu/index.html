@@ -6,8 +6,6 @@
 		{% csrf_token%}
 		UserId <input type="text" name="username" value="{{usename}}"><br>
 		Password <input type="password" name="password" value=""><br>
-		<input type="radio" name="user" value="student" checked>Student<br>
-		<input type="radio" name="user" value="operator" >Operator<br>
 		<input type="submit" value="Log In">
 	</form>
 {% endblock %}
