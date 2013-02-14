@@ -5,6 +5,7 @@
 	Total outgoing : {{outgoing}}
 	NetBalance : {{netBalance}}
 {% endif %}
+{{fileBackup}}
 <form action="" method='post'>
 	{% csrf_token%}
 	<input type='submit' value='Run'/>

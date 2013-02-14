@@ -70,7 +70,7 @@ def sendEmail(subject, message, mailingList = []):
 			)
 		return True
 	return False
-
+import os.path
 def endOfDayEvents(request):
 	message = {}
 	transactionToday = balanceSheet.objects.filter(date = datetime.date.today())
@@ -80,6 +80,10 @@ def endOfDayEvents(request):
 						'outgoing':transactionToday[0].outgoing,
 						'netBalance':transactionToday[0].netBalance,
 						}
+	if os.path.isfile('activityBackup/backup'+str(datetime.date.today())+'.sts'):
+		message['fileBackup'] = "Data is backuped"
+	else:
+		message['fileBackup'] = 'Data is not Backuped'
 	if request.method == "POST":
 		message['message'] = accountingTask() + backupDatabase() + notificationTrigger()
 	return render_to_response('ioestu/endofday.html', message, RequestContext(request))
