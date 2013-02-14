@@ -1,5 +1,7 @@
 from models import *
 from django.http import HttpResponse
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 import datetime
 from emailTemplates import *
 import json
@@ -18,25 +20,25 @@ def getJson(data):
 		})
 	return json.dumps(dataList)
 
-def backupDatabase(request):
+def backupDatabase(request = None):
 	totalTrans = Activity.objects.getTodaysActivity()
 	jsonData = getJson(totalTrans)
 	fileName = 'activityBackup/backup'+str(datetime.date.today())+'.sts'
 	backupFile = open(fileName, 'w+')
 	backupFile.write(jsonData)
 	backupFile.close()
-	return HttpResponse(jsonData)
+	return str(jsonData)
 
 
-def notificationTrigger(request):
+def notificationTrigger(request = None):
 	targetList = Student.objects.filter(balance__range=(0, 10))
 	mailList = []
 	for eachStudent in targetList:
 		mailList += [eachStudent.emailid]
-	return HttpResponse(sendEmail(subject = rechargeSubject, message = rechargeMessage, mailingList = mailList))
+	return str(sendEmail(subject = rechargeSubject, message = rechargeMessage, mailingList = mailList))
 
 
-def accountingTask(request):
+def accountingTask(request = None):
 	totalTrans = Activity.objects.getTodaysActivity()
 	totalDeposit, totalCredit, output = 0, 0, ''
 	for trans in totalTrans:
@@ -54,7 +56,7 @@ def accountingTask(request):
 	balance = balanceSheet(incoming = totalDeposit, outgoing = totalCredit, date = datetime.date.today(), netBalance = netDeposit)
 	balance.save()
 	sendEmail(reportSubject, getReportMessage(totalDeposit, totalCredit), EMAIL_SUPERUSER)
-	return HttpResponse('accounting task')
+	return str('accounting task')
 
 
 from django.core.mail import send_mail
@@ -68,3 +70,16 @@ def sendEmail(subject, message, mailingList = []):
 			)
 		return True
 	return False
+
+def endOfDayEvents(request):
+	message = {}
+	transactionToday = balanceSheet.objects.filter(date = datetime.date.today())
+	if transactionToday:
+		message = {'date': transactionToday[0].date,
+						"incoming":transactionToday[0].incoming,
+						'outgoing':transactionToday[0].outgoing,
+						'netBalance':transactionToday[0].netBalance,
+						}
+	if request.method == "POST":
+		message['message'] = accountingTask() + backupDatabase() + notificationTrigger()
+	return render_to_response('ioestu/endofday.html', message, RequestContext(request))
