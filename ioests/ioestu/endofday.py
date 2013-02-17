@@ -1,10 +1,63 @@
 from models import *
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 import datetime
 from emailTemplates import *
+from views import index
 import json
+
+
+import hashlib
+import random
+import string
+def forgotPassword(request):
+	message = {}
+	if request.method == 'POST':
+		userid = request.POST.get('userID')
+		if userid:
+			user = Student.objects.filter(student_id = userid)
+			oper = Operator.objects.filter(name = userid)
+			if user:
+				#generate token
+				salt = ''.join(random.choice(string.ascii_letters) for i in range(5))
+				token = hashlib.md5(user[0].student_id + user[0].firstname + user[0].password + salt).hexdigest()
+				message['mail'] = getResetMessage(user[0].firstname, user[0].student_id, token,salt)
+				# sendEmail(resetSubject, getResetMessage(user[0].firstname, user[0].student_id, token), [user[0].emailid,])
+				message['mailIsSend'] = True
+			elif oper:
+				#send mail
+				pass
+			else:
+				message['error'] = "invalid userID"
+	return render_to_response('ioestu/forgotPassword.html', message, RequestContext(request))
+
+def forgotPasswordValidator(request, token):
+	message = {}
+	token, userid = token.split('|')
+	salt = token[0:5]
+	token = token[5:]
+	user = Student.objects.filter(student_id = userid)
+	if user:
+		if token == hashlib.md5(user[0].student_id + user[0].firstname + user[0].password + salt).hexdigest():
+			message['username'] = user[0].firstname
+			if request.method =='POST':
+				if changePassword(user[0].student_id, request.POST.get('password'), request.POST.get('confirm')):
+					message['passwordChanged'] = True
+				else:
+					message['invalidPassword'] = "Your Passwords does not match."
+			return render_to_response("ioestu/resetPassword.html", message, RequestContext(request))
+	return HttpResponseRedirect('/')
+
+def changePassword(userid, password, confirm):
+	if password != confirm:
+		return False
+	user = Student.objects.get(student_id = userid)
+	user.password = password
+	user.save()
+	return True
+
+
 
 def getJson(data):
 	dataList = []
@@ -70,6 +123,8 @@ def sendEmail(subject, message, mailingList = []):
 			)
 		return True
 	return False
+
+
 import os.path
 def endOfDayEvents(request):
 	message = {}

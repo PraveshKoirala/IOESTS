@@ -25,8 +25,7 @@ class activityCustomQuery(models.Manager):
 	def getTodaysActivity(self):
 		cursor = connection.cursor()
 		cursor.execute('''
-				select * from ioestu_activity 
-				where date between now()- interval '1 days' + interval '+5:45' HOUR TO MINUTE and now() + interval '+5:45' HOUR TO MINUTE
+				select * from ioestu_activity where date between current_date and now()
 				''')
 		return cursor
 	def backItUp(self):
