@@ -1,16 +1,17 @@
 {% extends "ioestu/base.html" %}
 {% block content %} 	
 	{{ state }}<br>
+	<div class ="error"> {% if error%} {{error}} {%endif%}<br> </div>
 	<a href="/">logout</a>
 	<ul class="tabs" persist="true">
-            <li><a href="#" rel="view1">Info</a></li>
-            <li><a href="#" rel="view2">Transactions</a></li>
-            <li><a href="#" rel="view3">Create Account</a></li>
+            <li><a href="#" rel="Info">Info</a></li>
+            <li><a href="#" rel="transactions">Transactions</a></li>
+            <li><a href="#" rel="changepassword">Change Password</a></li>
             <li><a href="#" rel="view4">Close Account</a></li>
     </ul>
 
     <div class="tabcontents">
-            <div id="view1" class="tabcontent">
+            <div id="Info" class="tabcontent">
 
 					student_id: {{student.student_id}}<br>
 					firstname: {{student.firstname}}<br>
@@ -20,7 +21,7 @@
 
                 
             </div>
-            <div id="view2" class="tabcontent">
+            <div id="transactions" class="tabcontent">
             	<table>
 	             	<th>acivity_type</th>
 					<th>operator</th>
@@ -38,10 +39,18 @@
 					{% endfor %}
 				</table>
             </div>
-            <div id="view3" class="tabcontent">
-	                <form action="/logged/" method="post">
+            <div id="changepassword" class="tabcontent">
+	                <form action="/logged/#changepassword" method="post">
 							{% csrf_token%}
-							student_id <input type="text" name="student_id" value=""><br>
+							<em>Password</em> <br>
+							old password <input type="password" name="oldpassword" value=""><br>
+							new password <input type="password" name="newpassword" value=""><br>
+							reconfirm old password <input type="password" name="reconfirmpassword" value=""><br>
+							<br>
+							<br>
+							<em>Email</em>
+							new email <input type="input" name="newemail" value="{{newemail}}"><br>
+							<input type="hidden" name="activity_type" value="changedetails">
 							<input type="submit" value="submit">
 					</form>
             </div>

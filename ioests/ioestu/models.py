@@ -2,20 +2,20 @@ from django.db import models, connection
 import datetime
 
 class Student(models.Model):
-	student_id = models.CharField(max_length=20,primary_key=True)
-	firstname = models.CharField(max_length=20)
-	lastname = models.CharField(max_length=20)
-	lastlogin = models.CharField(max_length=20)
-	password = models.CharField(max_length=20)
+	student_id = models.CharField(max_length=50,primary_key=True)
+	firstname = models.CharField(max_length=50)
+	lastname = models.CharField(max_length=50)
+	lastlogin = models.DateTimeField(default=datetime.datetime.now())
+	password = models.CharField(max_length=50)
 	balance = models.FloatField()
-	emailid = models.CharField(max_length=50, unique=True)
+	emailid = models.CharField(max_length=100, unique=True)
 
 	def __unicode__(self):
 		return self.firstname
 
 class Operator(models.Model):
-	name = models.CharField(max_length=20)
-	password = models.CharField(max_length=20)
+	name = models.CharField(max_length=50)
+	password = models.CharField(max_length=50)
 
 	def __unicode__(self):
 		return self.name
@@ -44,7 +44,7 @@ class Activity(models.Model):
 	operator = models.ForeignKey('Operator')
 	details = models.CharField(max_length=50)
 	amount = models.FloatField()
-	date = models.DateTimeField(default=datetime.datetime.now)
+	date = models.DateTimeField(default=datetime.datetime.now())
 	objects = activityCustomQuery()
 	def __unicode__(self):
 		return self.atype
