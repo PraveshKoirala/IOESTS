@@ -11,6 +11,9 @@ th
 	width:100px;
 	text-align:left;
 }
+error{
+	color: 'red';
+}
 
 #content {
 	width: 800px;
