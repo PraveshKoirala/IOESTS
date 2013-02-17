@@ -124,11 +124,37 @@ def logged(request):
         return response
     
     else:
-        state = data_ioests['name']+", successfully logged in!"
+        state = ''
+        if request.method == "POST":
+        	activity_type = request.POST.get('activity_type')
+        	
+        	if activity_type == "changedetails":
+        		if request.POST.get('newpassword'):
+        		 	error = changepassword(request)
+        		  	if error == True:	#if successful
+        			   state = "Password changed successfully"
+        			
+        			
+        		elif request.POST.get('newemail'):
+        			error = changeemail(request)
+        			if error == True:
+        				state = "Email changed successfully"
+        			else:
+        				errordict['newemail'] = request.POST.get('newemail')
+        	
+        	
+        else:
+         	state = data_ioests['name']+", successfully logged in!"
+        
         student = Student.objects.get(student_id=data_ioests['name'])
         activities = Activity.objects.filter(student_id=student.student_id)
         #return render_to_response('ioestu/logged_student.html',{'state':state,'student':student,'activities':activities})
-        return render(request,'ioestu/logged_student.html',{'state':state,'student':student,'activities':activities})
+        if error == True:
+        	error = ''
+        context = {'state':state,'error':error, 'balance_before':data_ioests['balance_before']}
+        if len(errordict):
+        	context.update(errordict)
+        return render(request,'ioestu/logged_student.html',context)
 
 
 def payment(request):
@@ -203,7 +229,7 @@ def addaccount(request):
 	uname = request.POST.get('student_id')
 	if getoperator(uname) or getstudent(uname):
 		return 'The id already exists'
-	password = uname
+	password = validation.hash(uname)
 	email = request.POST.get('email')
 	firstname = request.POST.get('fname')
 	lastname = request.POST.get('lname')
@@ -235,4 +261,36 @@ def delaccount(request):
 	if not s:
 		return 'The id doesn\'t  exists'
 	s.delete()
+	return True
+
+
+
+
+def changepassword(request):
+	sid = request.session['data_ioests'].get('name')
+	password = request.POST.get('oldpassword')
+	newpassword = request.POST.get('newpassword')
+	student = getstudentp(sid,password)
+	if not student:
+		return 'Authentication error. '
+	if not validation.verifypassword(newpassword):
+		return 'Password invalid. Must be more than 5 characters'
+	student.password = validation.hash(newpassword)
+	student.save()
+	return True
+		
+	
+	
+def changeemail(request):
+	sid = request.session['data_ioests'].get('name')
+	password = request.POST.get('oldpassword')
+	newemail = request.POST.get('newemail')
+	student = getstudentp(sid,password)
+	if not student:
+		return 'Authentication error. '
+	error = validation.emailvalid(newemail)
+	if error != 'True':
+		return error
+	student.email = newemail
+	student.save()
 	return True
