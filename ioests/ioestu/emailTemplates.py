@@ -32,3 +32,16 @@ def getReportMessage(deposit, withdraw):
 	Total Balance Transaction = %d
 	Total Net Balance = %d
 	''' %(deposit, withdraw, deposit + withdraw, deposit - withdraw)
+
+from django.core.mail import send_mail
+# mail is send via ioests.noreply@gmail.com
+def sendEmail(subject, message, mailingList = []):
+	if mailingList:
+		send_mail(
+				subject,
+				message,
+				'ioests.noreply@gmail.com',
+				mailingList,
+			)
+		return True
+	return False

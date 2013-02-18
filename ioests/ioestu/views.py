@@ -294,3 +294,59 @@ def changeemail(request):
 	student.email = newemail
 	student.save()
 	return True
+
+from emailTemplates import *
+import hashlib
+def forgotPassword(request):
+    message = {}
+
+    if request.method == 'POST':
+        userid = request.POST.get('userID')
+        if userid:
+            user = Student.objects.filter(student_id = userid)
+            oper = Operator.objects.filter(name = userid)
+            if user:
+                salt = getsalt()
+                stringFeed = user[0].student_id + user[0].firstname + user[0].password + salt
+                token = hashlib.md5(stringFeed).hexdigest()
+                
+                mailMessage = getResetMessage(user[0].firstname, user[0].student_id, token, salt);
+                sendEmail(resetSubject, mailMessage, [user[0].emailid,])
+                message['mailIsSend'] = True
+            else:
+                message['error'] = "invalid userID"
+
+    return render_to_response('ioestu/forgotPassword.html', message, RequestContext(request))
+
+def forgotPasswordValidator(request, token):
+    message = {}
+    salt = token[0:5]
+    token = token[5:]
+    token, userid = token.split('U')
+
+    user = Student.objects.filter(student_id = userid)
+    if user:
+        stringFeed = user[0].student_id + user[0].firstname + user[0].password + salt
+        if token == hashlib.md5(stringFeed).hexdigest():
+            message['username'] = user[0].firstname
+            if request.method =='POST':
+                password = request.POST.get('password')
+                confirm = request.POST.get('confirm')
+                if changePassword(user[0].student_id, password, confirm):
+                    message['passwordChanged'] = True
+                else:
+                    message['invalidPassword'] = "Your Passwords do not match."
+            return render_to_response("ioestu/resetPassword.html", message, RequestContext(request))
+    
+    return HttpResponseRedirect('/')
+
+def changePassword(userid, password, confirm):
+    if password != confirm:
+        return False
+    
+    user = Student.objects.get(student_id = userid)
+    user.password = hash(password)
+    user.lastlogin = datetime.datetime.now()
+    user.save()
+    
+    return True

@@ -1,12 +1,12 @@
-{{message}}
 {% if date %}
 	Transaction Date : {{date}}
 	Total earning : {{incoming}}
 	Total outgoing : {{outgoing}}
 	NetBalance : {{netBalance}}
+
 {% endif %}
 {{fileBackup}}
 <form action="" method='post'>
 	{% csrf_token%}
-	<input type='submit' value='Run'/>
+	<input type='submit' value='Run End of Day Operations'/>
 </form>

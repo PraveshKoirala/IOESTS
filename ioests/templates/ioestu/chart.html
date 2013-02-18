@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Charts!</title>
+  <style type="text/css" media="screen">
+    th { font-size: 18px; text-align: left; border-top: 1px #ccc solid; padding-top: 4px; }
+    table { margin-left: auto; margin-right: auto; }
+  </style>
+</head>
+<body>
+  <h2>Chart tag examples</h2>
+  <table>
+    <tbody>
+        <tr>
+          <th colspan="2">{{ pieTitle }}</th>
+          <td><pre>{{ pieTemplate }}</pre></td>
+          <td>{{ pieChart|safe }}</td>
+        </tr>
+          <tr>
+          <th colspan="2">{{ lineTitle }}</th>
+          <td><pre>{{ lineTemplate }}</pre></td>
+          <td>{{ lineChart|safe }}</td>
+        </tr>
+    </tbody>
+  </table>
+</body>
+</html>

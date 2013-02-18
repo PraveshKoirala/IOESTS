@@ -21,5 +21,9 @@ urlpatterns += patterns('ioestu.endofday',
 	url(r'^endofday/$', 'endOfDayEvents'),
     url(r'^forgotPassword/$', 'forgotPassword'),
     url(r'^resetPassword/([^/]+)/$', 'forgotPasswordValidator'),
+    url(r'^temp/$', 'temp'),
     # url(r'^changePassword/$', 'changePassword'),
 	)
+urlpatterns +=patterns('ioestu.chart',
+    url(r'^runtest/$', 'getChart')
+    )
