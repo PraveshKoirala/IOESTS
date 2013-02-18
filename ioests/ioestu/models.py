@@ -20,7 +20,6 @@ class Operator(models.Model):
 	def __unicode__(self):
 		return self.name
 
-
 class activityCustomQuery(models.Manager):
 	def getTodaysActivity(self):
 		cursor = connection.cursor()
@@ -28,15 +27,6 @@ class activityCustomQuery(models.Manager):
 				select * from ioestu_activity where date between current_date and now()
 				''')
 		return cursor
-	def backItUp(self):
-		cursor = connection.cursor()
-		cursor.execute('''
-				select * into ioestu_backupactivity 
-				from ioestu_activity 
-				where date between now()- interval '1 days' + interval '+5:45' HOUR TO MINUTE and now() + interval '+5:45' HOUR TO MINUTE
-			''')
-		# cursor.execute("pg_dump -t 'ioestu_backupactivity'")
-		return True
 
 class Activity(models.Model):
 	student = models.ForeignKey('Student')
@@ -56,3 +46,5 @@ class balanceSheet(models.Model):
 	netBalance = models.FloatField()
 	def __unicode__(self):
 		return self.netBalance	
+
+

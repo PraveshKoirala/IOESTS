@@ -22,8 +22,8 @@ def forgotPassword(request):
 				#generate token
 				salt = ''.join(random.choice(string.ascii_letters) for i in range(5))
 				token = hashlib.md5(user[0].student_id + user[0].firstname + user[0].password + salt).hexdigest()
-				message['mail'] = getResetMessage(user[0].firstname, user[0].student_id, token,salt)
-				# sendEmail(resetSubject, getResetMessage(user[0].firstname, user[0].student_id, token), [user[0].emailid,])
+				# message['mail'] = getResetMessage(user[0].firstname, user[0].student_id, token,salt)
+				sendEmail(resetSubject, getResetMessage(user[0].firstname, user[0].student_id, token, salt), [user[0].emailid,])
 				message['mailIsSend'] = True
 			elif oper:
 				#send mail
@@ -34,9 +34,9 @@ def forgotPassword(request):
 
 def forgotPasswordValidator(request, token):
 	message = {}
-	token, userid = token.split('|')
 	salt = token[0:5]
 	token = token[5:]
+	token, userid = token.split('U')
 	user = Student.objects.filter(student_id = userid)
 	if user:
 		if token == hashlib.md5(user[0].student_id + user[0].firstname + user[0].password + salt).hexdigest():
@@ -54,6 +54,7 @@ def changePassword(userid, password, confirm):
 		return False
 	user = Student.objects.get(student_id = userid)
 	user.password = password
+	user.lastlogin = datetime.datetime.now()
 	user.save()
 	return True
 
@@ -91,7 +92,7 @@ def notificationTrigger(request = None):
 	return str(sendEmail(subject = rechargeSubject, message = rechargeMessage, mailingList = mailList))
 
 
-def accountingTask(request = None):
+def accountingTask(request = None):		#type of transaction left to be filled
 	totalTrans = Activity.objects.getTodaysActivity()
 	totalDeposit, totalCredit, output = 0, 0, ''
 	for trans in totalTrans:
@@ -113,6 +114,7 @@ def accountingTask(request = None):
 
 
 from django.core.mail import send_mail
+# mail is send via ioests.noreply@gmail.com
 def sendEmail(subject, message, mailingList = []):
 	if mailingList:
 		send_mail(
@@ -126,6 +128,7 @@ def sendEmail(subject, message, mailingList = []):
 
 
 import os.path
+########## only admin should be accessible to this routine
 def endOfDayEvents(request):
 	message = {}
 	transactionToday = balanceSheet.objects.filter(date = datetime.date.today())
