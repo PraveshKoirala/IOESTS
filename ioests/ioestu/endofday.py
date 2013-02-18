@@ -45,15 +45,18 @@ def forgotPasswordValidator(request, token):
 				if changePassword(user[0].student_id, request.POST.get('password'), request.POST.get('confirm')):
 					message['passwordChanged'] = True
 				else:
-					message['invalidPassword'] = "Your Passwords does not match."
+					message['invalidPassword'] = "Failed to change password, possible reasons are<br> Two passwords do not match<br> Password is less than 6 characters"
 			return render_to_response("ioestu/resetPassword.html", message, RequestContext(request))
 	return HttpResponseRedirect('/')
 
+import validation
 def changePassword(userid, password, confirm):
 	if password != confirm:
 		return False
+	if not validation.verifypassword(password):
+		return False
 	user = Student.objects.get(student_id = userid)
-	user.password = password
+	user.password = validation.hash(password)
 	user.lastlogin = datetime.datetime.now()
 	user.save()
 	return True

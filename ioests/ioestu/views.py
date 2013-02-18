@@ -151,7 +151,7 @@ def logged(request):
         #return render_to_response('ioestu/logged_student.html',{'state':state,'student':student,'activities':activities})
         if error == True:
         	error = ''
-        context = {'state':state,'error':error, 'balance_before':data_ioests['balance_before']}
+        context = {'state':state,'error':error, 'balance_before':data_ioests['balance_before'],'student':student,'activities':activities}
         if len(errordict):
         	context.update(errordict)
         return render(request,'ioestu/logged_student.html',context)
