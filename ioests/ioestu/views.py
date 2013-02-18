@@ -298,6 +298,7 @@ def changeemail(request):
 from emailTemplates import *
 from validation import getsalt
 import hashlib
+from validation import hash
 def forgotPassword(request):
     message = {}
 
