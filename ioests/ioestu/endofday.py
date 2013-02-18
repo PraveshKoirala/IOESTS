@@ -104,7 +104,7 @@ def endOfDayEvents(request):
 
 from chart import *
 def temp(request=None):
-	transactions = balanceSheet.objects.order_by('-date')[-10:]
+	transactions = balanceSheet.objects.order_by('-date')[0:10]
 	transactionData = [item.netBalance for item in transactions]
 	transactionDate = [item.date for item in transactions]
 	incomingTransactions = [item.incoming for item in transactions]

@@ -296,6 +296,7 @@ def changeemail(request):
 	return True
 
 from emailTemplates import *
+from validation import getsalt
 import hashlib
 def forgotPassword(request):
     message = {}
@@ -346,6 +347,7 @@ def changePassword(userid, password, confirm):
     
     user = Student.objects.get(student_id = userid)
     user.password = hash(password)
+    import datetime
     user.lastlogin = datetime.datetime.now()
     user.save()
     

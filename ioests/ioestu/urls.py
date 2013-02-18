@@ -7,6 +7,8 @@ admin.autodiscover()
 urlpatterns = patterns('ioestu.views',
 	url(r'^$','index'),
 	url(r'^logged/$','logged'),
+    url(r'^forgotPassword/$', 'forgotPassword'),
+    url(r'^resetPassword/([^/]+)/$', 'forgotPasswordValidator'),
     # Examples:
     # url(r'^$', 'ioests.views.home', name='home'),
     # url(r'^ioests/', include('ioests.foo.urls')),
@@ -19,8 +21,6 @@ urlpatterns = patterns('ioestu.views',
 
 urlpatterns += patterns('ioestu.endofday',
 	url(r'^endofday/$', 'endOfDayEvents'),
-    url(r'^forgotPassword/$', 'forgotPassword'),
-    url(r'^resetPassword/([^/]+)/$', 'forgotPasswordValidator'),
     url(r'^temp/$', 'temp'),
     # url(r'^changePassword/$', 'changePassword'),
 	)
