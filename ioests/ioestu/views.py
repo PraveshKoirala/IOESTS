@@ -31,11 +31,14 @@ def index(request):
 
 
 def logged(request):
+    if not 'data_ioests' in request.session:
+        return HttpResponseRedirect('/')
+
     last_Activity = ""
     data_ioests=request.session['data_ioests']
     error = ''
     errordict ={}
-    
+
     if data_ioests['type']=='operator':
         state = data_ioests['name']+", successfully logged in!"
         operator = data_ioests['name']
@@ -353,3 +356,14 @@ def changePassword(userid, password, confirm):
     user.save()
     
     return True
+
+from django.http import HttpResponse
+def clearSession(request):
+    # session = request.session['data_ioests']
+    # if request.session['data_ioests']:
+    #     del request.session["data_ioests"]
+    if 'data_ioests' in request.session:
+        del request.session['data_ioests']
+    else:
+        data = False
+    return HttpResponseRedirect('/')

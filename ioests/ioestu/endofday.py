@@ -74,6 +74,11 @@ from chart import *
 def endOfDayEvents(request):
 	message = {}
 	
+	if not 'data_ioests' in request.session:
+		return HttpResponseRedirect('/')
+	if not request.session['data_ioests']['type'] == 'operator':
+		return HttpResponseRedirect('/')
+
 	if request.method == "POST":
 		accountingTask()
 		backupDatabase()

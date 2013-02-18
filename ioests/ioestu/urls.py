@@ -9,6 +9,7 @@ urlpatterns = patterns('ioestu.views',
 	url(r'^logged/$','logged'),
     url(r'^forgotPassword/$', 'forgotPassword'),
     url(r'^resetPassword/([^/]+)/$', 'forgotPasswordValidator'),
+    url(r'^logout/$', 'clearSession')
     # Examples:
     # url(r'^$', 'ioests.views.home', name='home'),
     # url(r'^ioests/', include('ioests.foo.urls')),
