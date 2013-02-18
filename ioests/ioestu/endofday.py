@@ -6,7 +6,6 @@ import datetime
 from emailTemplates import *
 import json
 import os.path
-
 def getJson(data):
 	dataList = []
 	for item in data:
