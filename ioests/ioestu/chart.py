@@ -40,7 +40,7 @@ def getChart(request):
 	pieChart = getPieChart([1,2,3],['one', 'two', 'three'], 'this is the title')
 	lineTitle = 'this si line title'
 	lineTemplate = 'line'
-	lineChart = getLineChart([1,2,3], 'this is the title')
+	lineChart = getLineChart([1,2,3,5,3,7,10], [4,5,6], [4,2,5,7],'this is the title')
 	message = {
 				"pieChart":pieChart,
 				'pieTitle':pieTitle,
@@ -51,29 +51,35 @@ def getChart(request):
 	}
 	return render_to_response('ioestu/chart.html',message)
 
-def getLineChart(data, title):
-	data = {'data' : data, }
+def getLineChart(data1, data2, data3, labels, ylabels, legends):
+	data = {'data1' : data1,
+			'data2' : data2,
+			'data3' : data3,
+			'labels' : labels,
+			'ylabels' : ylabels,
+			'legends' : legends
+			 }
 	chart = '''
 	{% chart %}
 	{% chart-type "line" %}
-	{% chart-size "300x200" %}
+	{% chart-size "500x300" %}
 	{% chart-range-marker "v" "E5ECF9" ".75" ".25" %}
-	{% chart-fill-area "76A4FB" %}
-	{% chart-data data|slice:"::-1" %}
+	{% chart-colors "CC0000" "00CC00" "0000CC" %}
+	{% chart-data data1 data2 data3 %}
+	{% chart-legend legends %}
 	{% axis "left" %}
-		{% axis-range 0 1000 %}
+		{% axis-labels ylabels %}
 		{% endaxis %}
 	{% axis "bottom" %}
-		{% axis-labels "Jan" "Feb" "Mar" "Apr" %}
+		{% axis-labels labels %}
 	{% endaxis %}
-	{% chart-data-range "auto" %}
 	{% endchart %}
 	'''
 	t = template.Template("{% load charts %}" + chart)
 	rendered = t.render(template.Context(data))
 	return rendered
 
-def getPieChart(data, items, title):
+def getPieChart(data, items):
 	data = {'data' : data,
 			'items' : items,
 			 }

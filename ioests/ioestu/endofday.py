@@ -93,6 +93,9 @@ def endOfDayEvents(request):
 	else:
 		message['fileBackup'] = 'Data left to be Backuped'
 	
+	line = temp()
+	message['line'] = line
+
 	return render_to_response('ioestu/endofday.html', message, RequestContext(request))
 
 
@@ -100,23 +103,37 @@ def endOfDayEvents(request):
 
 
 
-
-def temp(request):
-	transactions = balanceSheet.objects.order_by('-date')[0:10]
+from chart import *
+def temp(request=None):
+	transactions = balanceSheet.objects.order_by('-date')[-10:]
 	transactionData = [item.netBalance for item in transactions]
 	transactionDate = [item.date for item in transactions]
-	incomingTransaction = [item.incoming for item in transactions]
+	incomingTransactions = [item.incoming for item in transactions]
 	outgoingTransactions = [item.outgoing for item in transactions]
+
+	try:
+		maximum = int(max(transactionData+outgoingTransactions+incomingTransactions))
+	except:
+		maximum = 100
+
+	ylabels = [0, maximum/2, maximum]
+	legends = ['NetBalance', 'Deposits', 'Expenses']
+	image = getLineChart(transactionData, incomingTransactions, outgoingTransactions, transactionDate, ylabels, legends)
 
 	studentid = '067BCT546'
 	studentActivity = Activity.objects.filter(student_id=studentid, atype='payment').order_by('-date')[0:10]
 	totalExpenses = [item.amount for item in studentActivity]
-	expensesDate = [item.date for item in studentActivity]
+	expensesDate = [item.date.date() for item in studentActivity]
+
+	# pieImage = getPieChart(totalExpenses, expensesDate)
+
+	# return HttpResponse(image)
+	return image#, pieImage
 
 
 
 
-	return HttpResponse(totalExpenses)
+	# return HttpResponse(totalExpenses)
 
 
 

@@ -61,3 +61,6 @@ def hash(password):
     l = hashlib.md5(password).hexdigest()
     l = password + l + password
     return hashlib.md5(l).hexdigest()
+
+def getsalt():
+    return ''.join(random.choice(string.ascii_letters) for i in range(5))
