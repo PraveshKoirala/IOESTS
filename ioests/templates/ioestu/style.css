@@ -1,18 +1,14 @@
 body {
     font-family:Arial,Helvetica,sans-serif;
     font-size: 14px;
-	color: #333;
 	margin: 0 auto;
-	padding: 10px;
 }
+
 
 th
 {
 	width:100px;
 	text-align:left;
-}
-error{
-	color: 'red';
 }
 
 #content {
@@ -23,8 +19,19 @@ error{
 
 }
 
+.header {
+	height: 80px;
+	text-align: center;
+	background-color: #2ace40;
+}
+
+.footer {
+	background-color: #2ace40;
+}
+
 #title {
 	text-align: center;
+	color: white;
 }
 
 div.left {
@@ -40,4 +47,11 @@ div.left {
 
 .error {
 	color: red;
+}
+
+td
+{
+width:50px;
+height:30px;
+vertical-align:top;
 }

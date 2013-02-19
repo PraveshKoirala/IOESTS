@@ -7,7 +7,6 @@
             <li><a href="#" rel="Info">Info</a></li>
             <li><a href="#" rel="transactions">Transactions</a></li>
             <li><a href="#" rel="changepassword">Change Password</a></li>
-            <li><a href="#" rel="view4">Close Account</a></li>
     </ul>
 
     <div class="tabcontents">
@@ -53,14 +52,7 @@
 							<input type="hidden" name="activity_type" value="changedetails">
 							<input type="submit" value="submit">
 					</form>
-            </div>
-            <div id="view4" class="tabcontent">
-	                <form action="/logged/" method="post">
-							{% csrf_token%}
-							student_id <input type="text" name="student_id" value=""><br>
-							<input type="submit" value="submit">
-					</form>             
-            </div>
+            </div>            
     </div>
 
 {% endblock %}

@@ -1,18 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <title>{% block title %}ioe student transaction system{% endblock %}</title>
+
     {% load static from staticfiles %}
     <script src="{%static "ioestu/tabcontent.js"%}" type="text/javascript"></script>
     <link rel="stylesheet" href="{% static "ioestu/style.css" %}">
+    <link rel="stylesheet" href="{% static "ioestu/layout.css" %}">
     <link href="{% static "ioestu/template2/tabcontent.css"%}" rel="stylesheet" type="text/css" />
-    <title>{% block title %}ioe student transaction system{% endblock %}</title>
+
 </head>
 
 <body>
-    <div id="title"><h3 >IOE Student Transaction System</h3></div>
-    <hr/>
-    <div id="content">
-        {% block content %}{% endblock %}
+
+    <div class="wrapper">
+
+        <div class="header">
+            <div id="title">
+                <h1>INSTITUTE OF ENGINEERING</h1>
+                <h3>STUDENT TRANSACTION SYSTEM</h3> 
+            </div>
+        </div>
+
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <div class="push"></div>
+
     </div>
+
+    <div class="footer">
+
+    </div>
+
 </body>
+
 </html>

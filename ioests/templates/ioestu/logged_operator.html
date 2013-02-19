@@ -19,16 +19,31 @@
 					<p><div class="error">{{last_Activity}}</div></p>
 					<form action="/logged/" method="post">
 						{% csrf_token%}
-						student_id <input type="text" name="student_id" value="{{student_id}}"><br>
-						password <input type="password" name="password" value=""><br>
-						details <input type="input" name="details" value="{{details}}" ><br>
-						amount <input type="input" name="amount" value="{{amount}}"><br>
-						<input type="submit" value="submit">
+						<table>
+							<tr>
+								<td>student_id</td>
+								<td><input type="text" name="student_id" value="{{student_id}}"></td>
+							</tr>
+							<tr>
+								<td>password</td>
+								<td><input type="password" name="password" value=""></td>
+							</tr>
+							<tr>
+								<td>details</td>
+								<td><input type="input" name="details" value="{{details}}" ></td>
+							</tr>
+							<tr>
+								<td>amount</td>
+								<td><input type="input" name="amount" value="{{amount}}"></td>
+							</tr>							
+						</table>
 						<input type="hidden" name="activity_type" value="payment">
+						<input type="submit" value="submit">
 					</form>
 					</td>
 					<td>
-					{% if credit_before != 'null' %}
+						{{credit_before}}
+					{% if balance_before != 'null' %}
 					<h2>last transaction</h2><br>
 					type: {{Activity_latest.atype}}<br>
 					details: {{Activity_latest.details}}<br>

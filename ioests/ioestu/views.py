@@ -5,6 +5,7 @@ from ioestu.models import Student,Operator, Activity
 from ioestu.validation import getstudentp, getoperatorp, getoperator,getstudent
 import ioestu.validation as validation
 from datetime import datetime
+from validation import hash
 
 
 def index(request):
@@ -12,10 +13,8 @@ def index(request):
 	#return render_to_response('ioestu/index.html', {'list_by_credit': list_by_credit})
     state = "Please log in below..."
     username = password = ''
-    if request.method == 'POST':        
-        
-
-        state = "wrong entry"
+    if request.method == 'POST':     
+        state = "invalid user id or password"
         username = request.POST.get('username')
         password = request.POST.get('password')
         if getoperatorp(username,password):

@@ -1,12 +1,33 @@
 {% extends "ioestu/base.html" %}
 {% block content %} 	
-	<p>Welcome to IOE Student Transaction System.</p>
-	{{ state }}
-	<form method="post">
-		{% csrf_token%}
-		UserId <input type="text" name="username" value="{{usename}}"><br>
-		Password <input type="password" name="password" value=""><br>
-		<a href="/forgotPassword/">Can't acess your account</a><br />
-		<input type="submit" value="Log In">
-	</form>
+
+	<h3><pre>  Welcome to IOE Student Transaction System.</pre></h3>
+
+	<ul class="tabs" persist="true">
+            <li><a href="#" rel="Info"></a></li>
+    </ul>
+
+    <div class="tabcontents">
+        <div class="tabcontent">
+			<form method="post">
+
+				{% csrf_token%}	
+				<div class="error">{{ state }}</div><br>
+				<table >
+					<tr>
+						<td>User Id	</td>
+						<td><input type="text" name="username" value=""></td>
+					</tr>
+					<tr>
+						<td>Password</td>
+						<td><input type="password" name="password" value=""></td>
+					</tr>
+				</table>
+					<a href="/forgotPassword/">Can't access your account</a><br/></br>
+					<input type="submit" value="Log In">
+				
+			</form>
+		</div>
+	</div>
+
 {% endblock %}
