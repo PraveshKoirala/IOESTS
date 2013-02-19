@@ -34,14 +34,15 @@ def logged(request):
         return HttpResponseRedirect('/')
 
     Activity_latest = Activity.objects.all()
-    last_Activity = ""
     data_ioests=request.session['data_ioests']
     data_ioests['balance_before'] = 'null'
     error = ''
+    state = ''
     errordict ={}
-
+    to_month={1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'May',6:'Jun',7:'Jul',8:'Aug',9:'Sep',10:'Oct',11:'Nov',12:'Dec'}
+    log = ""
     if data_ioests['type']=='operator':
-        state = data_ioests['name']+", successfully logged in!"
+        log = data_ioests['name']+", successfully logged in!"
         operator = data_ioests['name']
         
         if request.method == 'POST':  
@@ -91,7 +92,7 @@ def logged(request):
         if error == True:
             error = None
             
-        context = {'state':state,'error':error, 'balance_before':data_ioests['balance_before'],'Activity_latest':Activity_latest}
+        context = {'state':state,'error':error, 'balance_before':data_ioests['balance_before'],'Activity_latest':Activity_latest,'log':log}
         
         
         if len(errordict): #if error dictionary is not empty, update the context
@@ -105,10 +106,19 @@ def logged(request):
     
     else:
         state = ''
+        student = Student.objects.get(student_id=data_ioests['name'])
+        activities = Activity.objects.filter(student_id=student.student_id).order_by('-date')
+        dateset = []
+        for d in activities:
+            date = str(to_month[d.date.month])+', '+str(d.date.year)
+            if date not in dateset:
+                dateset.append(date)
+
+        log = data_ioests['name']+", successfully logged in!"
         if request.method == "POST":
-        	activity_type = request.POST.get('activity_type')
+            activity_type = request.POST.get('activity_type')
         	
-        	if activity_type == "changedetails":
+            if activity_type == "changedetails":
         		if request.POST.get('newpassword'):
         		 	error = changepassword(request)
         		  	if error == True:	#if successful
@@ -121,17 +131,29 @@ def logged(request):
         				state = "Email changed successfully"
         			else:
         				errordict['newemail'] = request.POST.get('newemail')
-        	
+            else:
+                search_time = request.POST.get('date')
+                keyword = request.POST.get('keyword')
+                if search_time:
+                    if not search_time == "all" and not keyword == '':
+                        year = search_time[-4:]
+                        month = to_month.keys()[to_month.values().index(search_time[:3])]
+                        activities = Activity.objects.filter(date__year = year, date__month = month,details__regex=r'(.*%s.*)'%keyword).order_by('-date')
+                    elif not search_time == "all":
+                        year = search_time[-4:]
+                        month = to_month.keys()[to_month.values().index(search_time[:3])]
+                        activities = Activity.objects.filter(date__year = year, date__month = month).order_by('-date')
+                    elif not keyword == '':
+                        activities = Activity.objects.filter(details__regex=r'(.*%s.*)'%keyword).order_by('-date')
+
         	
         else:
-         	state = data_ioests['name']+", successfully logged in!"
+            pass
         
-        student = Student.objects.get(student_id=data_ioests['name'])
-        activities = Activity.objects.filter(student_id=student.student_id)
         #return render_to_response('ioestu/logged_student.html',{'state':state,'student':student,'activities':activities})
         if error == True:
         	error = ''
-        context = {'state':state,'error':error, 'balance_before':data_ioests['balance_before'],'student':student,'activities':activities}
+        context = {'state':state,'error':error, 'balance_before':data_ioests['balance_before'],'student':student,'activities':activities,'log':log,'dateset':dateset}
         if len(errordict):
         	context.update(errordict)
         return render(request,'ioestu/logged_student.html',context)

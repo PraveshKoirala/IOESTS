@@ -4,15 +4,15 @@ body {
 	margin: 0 auto;
 }
 
-
 th
 {
-	width:100px;
-	text-align:left;
+	width:150px;
+	font-size: 13px;
+	height:40px;
 }
 
 #content {
-	width: 800px;
+	width: 850px;
 	margin: 0 auto;
 	padding: 12px 0 40px;
 	font: 0.85em arial;
