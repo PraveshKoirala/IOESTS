@@ -33,8 +33,10 @@ def logged(request):
     if not 'data_ioests' in request.session:
         return HttpResponseRedirect('/')
 
+    Activity_latest = Activity.objects.all()
     last_Activity = ""
     data_ioests=request.session['data_ioests']
+    data_ioests['balance_before'] = 'null'
     error = ''
     errordict ={}
 
@@ -71,6 +73,9 @@ def logged(request):
             elif activity_type == 'payment':
                 error = payment(request)
                 if error == True:
+                    Activity_latest = Activity.objects.all()
+                    if Activity_latest:
+                        Activity_latest = Activity.objects.all().order_by('-date')[0]
                 	state = 'A payment of %s made by %s'%(request.POST['amount'],request.POST['student_id'])
                 else:
                 	errordict['student_id']=request.POST.get('student_id')
@@ -82,38 +87,11 @@ def logged(request):
             	#TODO: write code for other actions
             	pass
             
-        if False:
-            student = request.POST.get('student')
-            type = request.POST.get('type')
-            details = request.POST.get('details')
-            amount = request.POST.get('amount')
-            if amount: amount = float(amount)
-            students = Student.objects.all()
-            last_Activity = "student doesn't exist"            
-            operat = Operator.objects.get(name=operator)
-            for stu in students:
-                if stu.student_id == student:  
-                    stud = Student.objects.get(student_id=student)
-                    data_ioests['balance_before']=stud.balance
-                    activ = Activity(
-                            student=stud,atype=type,operator=operat,details=details,amount=amount
-                        )
-                    activ.save()
-                    amount *= (type== 'credit deposited') and 1 or -1 
-                    stud.balance += amount
-                    stud.save()
-                   # del request.session['data_ioests']
-                    request.session['data_ioests']=data_ioests
-                    last_Activity=""
-	        Activity_latest = Activity.objects.all()
-	        if Activity_latest:
-	            Activity_latest = Activity.objects.all().order_by('-date')[0]
-        	return render_to_response(request,'ioestu/logged_operator.html',{'state':state,'last_Activity':last_Activity,'Activity_latest':Activity_latest,'balance_before':data_ioests['balance_before']},RequestContext(request))
         
         if error == True:
             error = None
             
-        context = {'state':state,'error':error, 'balance_before':data_ioests['balance_before']}
+        context = {'state':state,'error':error, 'balance_before':data_ioests['balance_before'],'Activity_latest':Activity_latest}
         
         
         if len(errordict): #if error dictionary is not empty, update the context
@@ -160,40 +138,43 @@ def logged(request):
 
 
 def payment(request):
-	sid = request.POST.get('student_id')
-	password = request.POST.get('password')
-	opname = request.session['data_ioests'].get('name')
-	
-	student = getstudentp(sid,password)
-	operator = getoperator(opname)
-	details = request.POST.get('details')
-	
-	if not(student and operator):
-		return "Student or Operator doesn't exist"
-	
-	amount = request.POST.get('amount')
-	if not amount:
-		return 'Amount field can\'t be empty'
-	
-	try:
-		amount = float(amount)
-	except:
-		return "Invalid Balance. Must be a float number"
-    
-	if amount >1000:
-		return "Can't pay more than Rs 1000 at a time"
+    sid = request.POST.get('student_id')
+    password = request.POST.get('password')
+    opname = request.session['data_ioests'].get('name')
 
-	if amount > student.balance:
-		return "Insufficient funds"
-    
-	student.balance -= amount
-	activ = Activity(student=student,atype='payment',operator=operator,details=details,amount=amount)
-	activ.save()
+    student = getstudentp(sid,password)
+    operator = getoperator(opname)
+    details = request.POST.get('details')
 
-	student.save()
-   
+    if not(student and operator):
+    	return "Student or Operator doesn't exist"
+
+    amount = request.POST.get('amount')
+    if not amount:
+    	return 'Amount field can\'t be empty'
+
+    try:
+    	amount = float(amount)
+    except:
+    	return "Invalid Balance. Must be a float number"
+
+    if amount >1000:
+    	return "Can't pay more than Rs 1000 at a time"
+
+    if amount > student.balance:
+       return "Insufficient funds"
+
+    data_ioests = request.session['data_ioests']
+    data_ioests['balance_before']=student.balance
+    request.session['data_ioests']=data_ioests
+    student.balance -= amount
+    activ = Activity(student=student,atype='payment',operator=operator,details=details,amount=amount)
+    activ.save()
+
+    student.save()
+
     #TODO: create activity
-	return True
+    return True
 
 
 def deposit(request):
