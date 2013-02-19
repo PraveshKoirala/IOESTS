@@ -4,36 +4,6 @@ from django.shortcuts import render_to_response
 from math import sin
 from models import *
 
-def render_examples(request):
-	data = {
-			'data1' : [10, 20, 30],
-			'data2' : [i**2 for i in range(20)],
-			'data3' : [i**2 for i in range(20, 0, -1)],
-			'data4' : [sin(i/5.0)*5 for i in range(100)],
-			'venn' : [100, 80, 60, 30, 30, 30, 10],
-			'mapdata': {'KS': 0, 'CA': 100, "MN": 50},
-			'grid_lines_data': [(6,5), (6,10), (6,15)],
-			'grid_lines_style': [('FFFFFF','1','1'), ('FFFFFF','2','1'), ('FFFFFF','3','1'),]
-	}
-	examples = []
-	chart = '''
-		{% chart %}
-			{% chart-data data1 %}
-			{% chart-size "300x200" %}
-			{% chart-type "pie" %}
-			{% chart-labels "One" "Two" "Three" %}
-			{% chart-alt "It worked!" %}
-		{% endchart %}
-		'''
-	t = template.Template("{% load charts %}" + chart)
-	rendered = t.render(template.Context(data))
-	examples.append({
-			'title' : 'this is title',
-			'template' : 'line chart',
-			'image' : rendered,
-		})
-	return render_to_response('ioestu/chart.html', {'examples':examples, 'data':data})
-
 def getChart(request):
 	pieTitle = 'this si pie title'
 	pieTemplate = 'pie'
@@ -79,21 +49,67 @@ def getLineChart(data1, data2, data3, labels, ylabels, legends):
 	rendered = t.render(template.Context(data))
 	return rendered
 
-def getPieChart(data, items):
-	data = {'data' : data,
-			'items' : items,
+def getSingleChart(data1, labels, ylabels, legends):
+	data = {'data1' : data1,
+			'labels' : labels,
+			'ylabels' : ylabels,
+			'legends' : legends
 			 }
 	chart = '''
-		{% chart %}
-			{% chart-data data %}
-			{% chart-size "300x200" %}
-			{% chart-type "pie" %}
-			{% chart-labels items %}
-			{% chart-title "Pie-Chart!" 18 "cc0000" %}
-		{% endchart %}
-		'''
-
+	{% chart %}
+	{% chart-type "line" %}
+	{% chart-size "500x300" %}
+	{% chart-range-marker "v" "E5ECF9" ".75" ".25" %}
+	{% chart-colors "CC0000" %}
+	{% chart-data data1 %}
+	{% chart-legend legends %}
+	{% axis "left" %}
+		{% axis-labels ylabels %}
+		{% endaxis %}
+	{% axis "bottom" %}
+		{% axis-labels labels %}
+	{% endaxis %}
+	{% endchart %}
+	'''
 	t = template.Template("{% load charts %}" + chart)
 	rendered = t.render(template.Context(data))
 	return rendered
 
+def getLineGraphS(studentId):
+	studentActivity = Activity.objects.filter(student_id=studentId, atype='payment').order_by('-date')[0:10]
+	totalExpenses = [item.amount for item in studentActivity]
+	expensesDate = [item.date.date() for item in studentActivity]
+	
+	if totalExpenses:
+		try:
+			maximum = int(max(totalExpenses))
+		except:
+			maximum = 100
+
+		ylabels = [0, maximum/2, maximum]
+		image = getSingleChart(totalExpenses, expensesDate, ylabels, ['expenses', ])
+		return image
+	return False
+
+def getLineGraphO(request=None):
+	transactions = balanceSheet.objects.order_by('-date')[0:10]
+	transactionData = [item.netBalance for item in transactions]
+	transactionDate = [item.date for item in transactions]
+	incomingTransactions = [item.incoming for item in transactions]
+	outgoingTransactions = [item.outgoing for item in transactions]
+
+	if transactionData+outgoingTransactions+incomingTransactions:
+		try:
+			maximum = int(max(transactionData+outgoingTransactions+incomingTransactions))
+		except:
+			maximum = 100
+
+		ylabels = [0, maximum/2, maximum]
+		legends = ['NetBalance', 'Deposits', 'Expenses']
+		image = getLineChart(transactionData, incomingTransactions, outgoingTransactions, transactionDate, ylabels, legends)
+
+		# pieImage = getPieChart(totalExpenses, expensesDate)
+
+		# return HttpResponse(image)
+		return image#, pieImage
+	return False

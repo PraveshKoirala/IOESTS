@@ -70,9 +70,15 @@ def accountingTask(request = None):		#type of transaction left to be filled
 
 
 ########## only admin should be accessible to this routine
+from chart import *
 def endOfDayEvents(request):
 	message = {}
 	
+	if not 'data_ioests' in request.session:
+		return HttpResponseRedirect('/')
+	if not request.session['data_ioests']['type'] == 'operator':
+		return HttpResponseRedirect('/')
+
 	if request.method == "POST":
 		accountingTask()
 		backupDatabase()
@@ -92,47 +98,11 @@ def endOfDayEvents(request):
 	else:
 		message['fileBackup'] = 'Data left to be Backuped'
 	
-	line = temp()
+	line = getLineGraphO()
 	message['line'] = line
 
 	return render_to_response('ioestu/endofday.html', message, RequestContext(request))
 
-
-
-
-
-
-from chart import *
-def temp(request=None):
-	transactions = balanceSheet.objects.order_by('-date')[0:10]
-	transactionData = [item.netBalance for item in transactions]
-	transactionDate = [item.date for item in transactions]
-	incomingTransactions = [item.incoming for item in transactions]
-	outgoingTransactions = [item.outgoing for item in transactions]
-
-	try:
-		maximum = int(max(transactionData+outgoingTransactions+incomingTransactions))
-	except:
-		maximum = 100
-
-	ylabels = [0, maximum/2, maximum]
-	legends = ['NetBalance', 'Deposits', 'Expenses']
-	image = getLineChart(transactionData, incomingTransactions, outgoingTransactions, transactionDate, ylabels, legends)
-
-	studentid = '067BCT546'
-	studentActivity = Activity.objects.filter(student_id=studentid, atype='payment').order_by('-date')[0:10]
-	totalExpenses = [item.amount for item in studentActivity]
-	expensesDate = [item.date.date() for item in studentActivity]
-
-	# pieImage = getPieChart(totalExpenses, expensesDate)
-
-	# return HttpResponse(image)
-	return image#, pieImage
-
-
-
-
-	# return HttpResponse(totalExpenses)
 
 
 

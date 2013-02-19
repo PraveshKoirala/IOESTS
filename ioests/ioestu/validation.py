@@ -66,3 +66,4 @@ import random
 import string
 def getsalt():
     return ''.join(random.choice(string.ascii_letters) for i in range(5))
+    
