@@ -6,6 +6,8 @@ import datetime
 from emailTemplates import *
 import json
 import os.path
+from ioests.settings import SITE_ROOT
+
 def getJson(data):
 	dataList = []
 	for item in data:
@@ -23,8 +25,7 @@ def getJson(data):
 def backupDatabase(request = None):
 	totalTrans = Activity.objects.getTodaysActivity()
 	jsonData = getJson(totalTrans)
-	
-	fileName = 'activityBackup/backup'+str(datetime.date.today())+'.sts'
+	fileName = SITE_ROOT+'/activityBackup/backup'+str(datetime.date.today())+'.sts'
 	backupFile = open(fileName, 'w+')
 	backupFile.write(jsonData)
 	backupFile.close()

@@ -1,1 +1,1 @@
-[]
+[{"atype": "deposit", "detail": "amount deposited", "date": "2013-02-18 11:22:27.394190+00:00", "amount": 1000.0, "student": "067bct530", "operator": 1, "id": "8"}, {"atype": "payment", "detail": "Coffee", "date": "2013-02-18 11:22:27.394190+00:00", "amount": 20.0, "student": "067bct530", "operator": 1, "id": "9"}]
