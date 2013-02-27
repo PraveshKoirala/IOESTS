@@ -102,7 +102,3 @@ def endOfDayEvents(request):
 	message['line'] = line
 
 	return render_to_response('ioestu/endofday.html', message, RequestContext(request))
-
-
-
-

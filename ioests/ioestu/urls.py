@@ -22,7 +22,7 @@ urlpatterns = patterns('ioestu.views',
 
 urlpatterns += patterns('ioestu.endofday',
 	url(r'^endofday/$', 'endOfDayEvents'),
-    url(r'^temp/$', 'temp'),
+    # url(r'^temp/$', 'temp'),
     # url(r'^changePassword/$', 'changePassword'),
 	)
 urlpatterns +=patterns('ioestu.chart',
