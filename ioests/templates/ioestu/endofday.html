@@ -1,13 +1,24 @@
-{% if date %}
-	Transaction Date : {{date}}
-	Total earning : {{incoming}}
-	Total outgoing : {{outgoing}}
-	NetBalance : {{netBalance}}
+{% extends "ioestu/base.html" %}
+{% block content %} 
 
-{% endif %}
-{{fileBackup}}
-<form action="" method='post'>
-	{% csrf_token%}
-	<input type='submit' value='Run End of Day Operations'/>
-</form>
-{{ line|safe }}
+	{% if date %}
+		<pre><b>Transaction Date:</b> {{date}}   |   <b>Total earning:</b> {{incoming}}   |   <b>Total outgoing:</b> {{outgoing}}   |   <b>NetBalance:</b> {{netBalance}}</pre>
+		<b>{{fileBackup}}</b>
+	{% endif %}
+
+	<ul class="tabs" persist="true">
+            <li><a href="#" rel="endofday"></a></li>
+    </ul>
+
+    <div class="tabcontents">
+        <div id="endofday" class="tabcontent">
+        	<a href="/logged/" >Go to operator page</a><br><br>
+			<form action="" method='post'>
+				{% csrf_token%}
+				<input type='submit' value='Run End of Day Operations'/>
+			</form><br><br>
+			{{ line|safe }}
+		</div>
+	</div>
+
+{% endblock %}

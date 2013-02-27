@@ -1,66 +1,106 @@
 {% extends "ioestu/base.html" %}
+
 {% block content %} 	
-	{{ state }}<br>
+
+	<a href="/logout/">logout</a> <b>{{ log }}</b><br><br>
+
 	<div class ="error"> {% if error%} {{error}} {%endif%}<br> </div>
-	<a href="/logout/">logout</a>
+	{{state}}<br>
+
 	<ul class="tabs" persist="true">
             <li><a href="#" rel="Info">Info</a></li>
             <li><a href="#" rel="transactions">Transactions</a></li>
-            <li><a href="#" rel="changepassword">Change Password</a></li>
-            <li><a href="#" rel="view4">Close Account</a></li>
+            <li><a href="#" rel="changepassword">Edit Info</a></li>
     </ul>
 
     <div class="tabcontents">
+
             <div id="Info" class="tabcontent">
-
-					student_id: {{student.student_id}}<br>
-					firstname: {{student.firstname}}<br>
-					lastname: {{student.lastname}}<br>
-					balance: {{student.balance}}<br>
-					emailid: {{student.emailid}}<br>
-
-                
-            </div>
-            <div id="transactions" class="tabcontent">
             	<table>
-	             	<th>acivity_type</th>
-					<th>operator</th>
-					<th>details</th>
-					<th>amount</th>
-					<th>datetime</th>   
-				{% for activity in activities%}
-					<tr>
-					<td>{{activity.atype}}</td>
-					<td>{{activity.operator}}</td>
-					<td>{{activity.details}}</td>
-					<td>{{activity.amount}}</td>
-					<td>{{activity.date}}</td>
-					</tr>
+            		<tr>
+            			<td>student id:</td>
+            			<td>{{student.student_id}}</td>
+            		</tr>
+            		<tr>
+            			<td>firstname:</td>
+            			<td>{{student.firstname}}</td>
+            		</tr>
+            		<tr>
+            			<td>lastname:</td>
+            			<td>{{student.lastname}}</td>
+            		</tr>
+            		<tr>
+            			<td>balance:</td>
+            			<td>{{student.balance}}</td>
+            		</tr>
+            			<td>email id:</td>
+            			<td>{{student.emailid}}</td>
+            		</tr>
+            	</table>                
+            </div>
+
+            <div id="transactions" class="tabcontent">
+            	<form method="post">  
+            		{% csrf_token%}	            	
+	            	<b>Search by Details:</b> <input type="input" name="keyword" value="" size=80>	            	
+	            	<select name="date">
+	            		<option value="all">All</option>
+	            		{% for date in dateset %}
+	            		    <option value= "{{date}}">{{date}}</option>
+	            		{% endfor %}
+	            	</select> 
+	            	<input type="hidden" name="activity_type" value="search">
+					<input type="submit" value="search">
+	            </form>
+
+            	<table border="1" cellspacing ='0' bordercolor ='#ccc' style="text-align:center;">
+            		<tr>
+		             	<th>activity type</th>
+						<th>operator</th>
+						<th>details</th>
+						<th>amount</th>
+						<th>date-time</th>  
+					</tr> 
+					{% for activity in activities%}
+						<tr>
+							<td>{{activity.atype}}</td>
+							<td>{{activity.operator}}</td>
+							<td>{{activity.details}}</td>
+							<td>{{activity.amount}}</td>
+							<td>{{activity.date}}</td>
+						</tr>
 					{% endfor %}
 				</table>
             </div>
+
             <div id="changepassword" class="tabcontent">
-	                <form action="/logged/#changepassword" method="post">
-							{% csrf_token%}
-							<em>Password</em> <br>
-							old password <input type="password" name="oldpassword" value=""><br>
-							new password <input type="password" name="newpassword" value=""><br>
-							reconfirm old password <input type="password" name="reconfirmpassword" value=""><br>
-							<br>
-							<br>
-							<em>Email</em>
-							new email <input type="input" name="newemail" value="{{newemail}}"><br>
-							<input type="hidden" name="activity_type" value="changedetails">
-							<input type="submit" value="submit">
-					</form>
-            </div>
-            <div id="view4" class="tabcontent">
-	                <form action="/logged/" method="post">
-							{% csrf_token%}
-							student_id <input type="text" name="student_id" value=""><br>
-							<input type="submit" value="submit">
-					</form>             
-            </div>
+                <form action="/logged/#changepassword" method="post">
+					{% csrf_token%}
+					<table>
+						<tr><td><b>Password:</b></td></tr>
+						<tr>
+							<td>old password</td>
+							<td><input type="password" name="oldpassword" value=""></td>
+						</tr>
+						<tr>
+							<td>new password</td>
+							<td><input type="password" name="newpassword" value=""></td>
+						</tr>
+						<tr>
+							<td>confirm old password</td>
+							<td><input type="password" name="reconfirmpassword" value=""></td>
+						</tr>
+						<tr><td><b>Email:</b></td></tr>
+						<tr>
+							<td>new email</td>
+							<td><input type="input" name="newemail" value="{{newemail}}"></td>
+						</tr>
+					</table>
+					<input type="hidden" name="activity_type" value="changedetails">
+					<input type="submit" value="submit">
+				</form>
+            </div>    
+
     </div>
 
 {% endblock %}
