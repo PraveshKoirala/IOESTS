@@ -51,12 +51,17 @@ def accountingTask(request = None):		#type of transaction left to be filled
 			totalDeposit += trans[5]
 		elif (trans[2] == 'payment'):
 			totalCredit += trans[5]
+		elif (trans[2] == 'newaccount'):
+			totalDeposit += 100
 	netDeposit = totalDeposit - totalCredit
 	
 	if balanceSheet.objects.all():
 		lastEntry = balanceSheet.objects.all().order_by('-date')[0]
+		slEntry = balanceSheet.objects.all().order_by('-date')[1]
 		if lastEntry.date != datetime.date.today():
 			netDeposit += lastEntry.netBalance
+		else:
+			netDeposit += slEntry.netBalance
 	
 	balance = balanceSheet(
 		incoming = totalDeposit,
@@ -65,7 +70,7 @@ def accountingTask(request = None):		#type of transaction left to be filled
 		 netBalance = netDeposit)
 	balance.save()
 	
-	sendEmail(reportSubject, getReportMessage(totalDeposit, totalCredit), EMAIL_SUPERUSER)
+	#####sendEmail(reportSubject, getReportMessage(totalDeposit, totalCredit), EMAIL_SUPERUSER)
 	
 	return True
 
@@ -83,7 +88,7 @@ def endOfDayEvents(request):
 	if request.method == "POST":
 		accountingTask()
 		backupDatabase()
-		notificationTrigger()
+		###notificationTrigger()
 
 
 	transactionToday = balanceSheet.objects.filter(date = datetime.date.today())
@@ -103,3 +108,88 @@ def endOfDayEvents(request):
 	message['line'] = line
 
 	return render_to_response('ioestu/endofday.html', message, RequestContext(request))
+
+
+
+###DATABASE GENERATION CODE
+from validation import hash
+from validation import getstudent
+from validation import getoperator
+import random
+def sandbox(request):
+	a = file("e:/college/lms_member.csv", 'r') 
+	item = a.readline()
+	datime = datetime.datetime.now()
+	while (item):
+		container = item.split();
+		stuid = container[len(container)-1]
+		lastname = container[len(container)-2]
+		
+		firstname = ""
+		for i in xrange(len(container)-2):
+			firstname += container[i] + " "
+		
+		balance = 100
+		emailid = container[0] +stuid+'@ioests.ioe.edu.np'
+		
+		stuData = Student(student_id = stuid, firstname = firstname, lastname = lastname,
+							lastlogin = datime, password = hash(stuid), balance = balance, emailid =emailid )
+		stuData.save()
+
+		opeData = getoperator("hari")
+
+		actData = Activity(student=stuData,atype='newaccount',operator=opeData,details='new account created',amount=100.)
+		actData.save()
+		
+		item = a.readline()
+	return HttpResponse("sandbox test")
+
+def generateActivity(request):
+	oNames = ['hari', 'gopal', 'ram', 'gita', 'rita', 'shyam', 'mina']
+	for i in xrange(200):
+		a = file("E:/College/lms_member.csv", 'r')
+		ran = random.choice([j+1 for j in xrange(1930)])
+		for j in xrange(ran):
+			item = a.readline()
+		container = item.split();
+		stuid = container[len(container)-1]
+		student = getstudent(stuid)
+		operator = getoperator(oNames[random.choice([j for j in xrange(len(oNames))])])
+
+		amount = random.choice([j for j in xrange(20)]) + 10
+
+		if amount > student.balance:
+			continue
+
+		student.balance -= amount
+		activ = Activity(student=student,atype='payment',operator=operator,
+								details="For photocopy" if i%2 == 0 else "Canteen expense",amount=amount)
+		activ.save()
+
+		student.save()
+
+		a.close()
+	return HttpResponse("activities set")
+def activityDeposit(request):
+	oNames = ['hari', 'gopal', 'ram', 'gita', 'rita', 'shyam', 'mina']
+	for i in xrange(50):
+		a = file("E:/College/lms_member.csv", 'r')
+		ran = random.choice([j+1 for j in xrange(1930)])
+		for j in xrange(ran):
+			item = a.readline()
+		container = item.split();
+		stuid = container[len(container)-1]
+		student = getstudent(stuid)
+		operator = getoperator(oNames[random.choice([j for j in xrange(len(oNames))])])
+
+		amount = random.choice([j for j in xrange(50)]) + 10
+
+		student.balance += amount
+		activ = Activity(student=student,atype='deposit',operator=operator,
+								details="amount deposited",amount=amount)
+		activ.save()
+
+		student.save()
+
+		a.close()
+	return HttpResponse("deposit done")

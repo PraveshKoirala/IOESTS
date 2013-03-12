@@ -22,11 +22,14 @@ urlpatterns = patterns('ioestu.views',
 
 urlpatterns += patterns('ioestu.endofday',
 	url(r'^endofday/$', 'endOfDayEvents'),
-<<<<<<< HEAD
-    # url(r'^temp/$', 'temp'),
-=======
+    
+
+    #url(r'^fillDatabase/$', 'sandbox' ),
+    #url(r'^generateActivity/$', 'generateActivity'),
+    #url(r'^deposit/$', 'activityDeposit'),
+
    # url(r'^temp/$', 'temp'),
->>>>>>> a9429aee6fbb712faa5a7db36e16b94696436f2a
+    #>>>>>>> a9429aee6fbb712faa5a7db36e16b94696436f2a
     # url(r'^changePassword/$', 'changePassword'),
 	)
 urlpatterns +=patterns('ioestu.chart',
